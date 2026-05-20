@@ -22,7 +22,7 @@ SRC = HERE.parent / "src"
 VERILOG_SOURCES = [
     SRC / "vga_sync.v",
     SRC / "pixel_logic.v",
-    SRC / "tt_um_happyhop.v",
+    SRC / "tt_um_happyhop_deadcast2.v",
     HERE / "tb.v",
 ]
 

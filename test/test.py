@@ -259,7 +259,7 @@ async def test_vsync_timing(dut):
 
 # ---- Phase 2: static ball + Phase 4: smiley pixel pattern ------------------
 
-# Match the constants in tt_um_happyhop.v.
+# Match the constants in tt_um_happyhop_deadcast2.v.
 BALL_X    = 304
 BALL_Y    = 224
 BALL_SIZE = 32
@@ -367,7 +367,7 @@ async def test_smiley_rounded_corners(dut):
 
 # ---- Phase 3: ball motion --------------------------------------------------
 
-# Match the localparams in tt_um_happyhop.v.
+# Match the localparams in tt_um_happyhop_deadcast2.v.
 INIT_BX, INIT_BY = 304, 224
 INIT_VX, INIT_VY = 2, 1
 

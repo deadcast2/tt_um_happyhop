@@ -25,7 +25,7 @@ module tb ();
   wire VGND = 1'b0;
 `endif
 
-  tt_um_happyhop user_project (
+  tt_um_happyhop_deadcast2 user_project (
 `ifdef GL_TEST
       .VPWR(VPWR),
       .VGND(VGND),

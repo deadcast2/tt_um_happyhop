@@ -13,7 +13,7 @@
 
 `default_nettype none
 
-module tt_um_happyhop (
+module tt_um_happyhop_deadcast2 (
     input  wire [7:0] ui_in,    // dedicated inputs  (unused for now)
     output wire [7:0] uo_out,   // dedicated outputs -> TT VGA PMOD
     input  wire [7:0] uio_in,   // bidir inputs  (unused)

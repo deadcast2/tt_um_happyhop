@@ -16,7 +16,7 @@ and how to use it.
 ```
 happyhop/
   src/                     # Chip RTL - goes to silicon
-    tt_um_happyhop.v       # TT-standard top module
+    tt_um_happyhop_deadcast2.v       # TT-standard top module
     vga_sync.v             # 640x480 @ 60 Hz sync generator
     config.json            # LibreLane build settings - don't edit
   test/                    # cocotb simulation

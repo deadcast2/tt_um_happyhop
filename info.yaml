@@ -11,11 +11,11 @@ project:
   tiles: "1x1"
 
   # Top module name must start with "tt_um_".
-  top_module:  "tt_um_happyhop"
+  top_module:  "tt_um_happyhop_deadcast2"
 
   # All Verilog files under ./src/, one per line.
   source_files:
-    - "tt_um_happyhop.v"
+    - "tt_um_happyhop_deadcast2.v"
     - "vga_sync.v"
     - "pixel_logic.v"
 

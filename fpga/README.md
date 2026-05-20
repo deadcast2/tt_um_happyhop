@@ -7,7 +7,7 @@ FPGA before tape-out. They never go to silicon.
 
 - `arty_top.v` - A thin top-level wrapper. Generates a 25 MHz pixel clock
   from the Arty's 100 MHz oscillator, synchronizes BTN0 into the chip's
-  active-low reset, instantiates `tt_um_happyhop`, and bit-replicates the
+  active-low reset, instantiates `tt_um_happyhop_deadcast2`, and bit-replicates the
   chip's RGB222 outputs into the RGB444 expected by the Digilent Pmod VGA.
 - `arty_a7.xdc` - Pin assignments + timing constraints for the Arty A7
   Rev. E. Assumes the Digilent Pmod VGA is plugged into JB (red + blue)
@@ -81,6 +81,6 @@ and will drive the TT VGA PMOD directly with 6 color bits.
   (held low through synchronizer = chip in permanent reset).
 - **Picture is the wrong color**: bit ordering between TT VGA PMOD and
   Digilent Pmod might be swapped in `arty_top.v`. Check `chip_R/G/B`
-  derivations against the pinout comment in `tt_um_happyhop.v`.
+  derivations against the pinout comment in `tt_um_happyhop_deadcast2.v`.
 - **Vivado complains "clock_100mhz not found"**: verify your XDC matches
   the port name in `arty_top.v` (`clk_100mhz`, not `clock_100mhz`).

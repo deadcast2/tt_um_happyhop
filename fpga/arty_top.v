@@ -57,7 +57,7 @@ module arty_top (
     wire [7:0] uio_out;
     wire [7:0] uio_oe;
 
-    tt_um_happyhop dut (
+    tt_um_happyhop_deadcast2 dut (
         .ui_in   (8'b0),
         .uo_out  (uo_out),
         .uio_in  (8'b0),

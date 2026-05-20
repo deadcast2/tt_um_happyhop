@@ -5,7 +5,7 @@ SIM ?= icarus
 FST ?= -fst
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = tt_um_happyhop.v vga_sync.v pixel_logic.v
+PROJECT_SOURCES = tt_um_happyhop_deadcast2.v vga_sync.v pixel_logic.v
 
 ifneq ($(GATES),yes)
 

@@ -19,7 +19,7 @@ create_project -force $proj_name $build_dir -part $part
 add_files -fileset sources_1 [list \
     "$repo_root/src/vga_sync.v" \
     "$repo_root/src/pixel_logic.v" \
-    "$repo_root/src/tt_um_happyhop.v" \
+    "$repo_root/src/tt_um_happyhop_deadcast2.v" \
     "$repo_root/fpga/arty_top.v" \
 ]
 set_property top $top [get_filesets sources_1]
