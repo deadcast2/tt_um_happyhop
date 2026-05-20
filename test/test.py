@@ -317,15 +317,25 @@ async def test_ball_bounding_box(dut):
 
 @cocotb.test()
 async def test_smiley_features(dut):
-    """Eyes, between-eyes, mouth and chin render at the expected sprite positions."""
+    """Eyes, between-eyes, mouth and chin render at the expected sprite positions.
+
+    Samples at frame 10 so we're past the initial blink window (frames 0-5),
+    which means the eye holes are visible and not closed by the blink animation.
+    """
     await _reset_and_start_clock(dut)
 
-    eye_x, eye_y         = ball_screen_coords(3, 4)
-    nose_x, nose_y       = ball_screen_coords(6, 4)
-    mouth_x, mouth_y     = ball_screen_coords(8, 10)
-    chin_x, chin_y       = ball_screen_coords(7, 14)
+    # Advance to frame 10. _wait_frames(9) + scan_next_frame's own vsync wait
+    # gives us 10 frame_ticks total, putting the ball at ball_xy_at_frame(10).
+    await _wait_frames(dut, 9)
 
-    samples = await scan_frame_zero(dut, {
+    bx, by = ball_xy_at_frame(10)
+
+    eye_x,   eye_y   = bx + 2 * 3,  by + 2 * 4
+    nose_x,  nose_y  = bx + 2 * 6,  by + 2 * 4
+    mouth_x, mouth_y = bx + 2 * 8,  by + 2 * 10
+    chin_x,  chin_y  = bx + 2 * 7,  by + 2 * 14
+
+    samples = await scan_next_frame(dut, {
         "bg":            (10, 10),
         "left_eye":      (eye_x, eye_y),
         "between_eyes":  (nose_x, nose_y),
@@ -414,3 +424,46 @@ async def test_ball_motion(dut):
     )
 
     dut._log.info("Ball motion OK (frame 1 + frame 5 face pixels both yellow)")
+
+
+# ---- Phase 5: eye blink ----------------------------------------------------
+
+BLINK_LEN = 6   # must match tt_um_happyhop_deadcast2.v
+
+
+def ball_xy_at_frame(n: int) -> tuple:
+    """Ball top-left position at frame n (0-indexed after reset)."""
+    return INIT_BX + n * INIT_VX, INIT_BY + n * INIT_VY
+
+
+@cocotb.test()
+async def test_blink(dut):
+    """Eyes are closed during the first BLINK_LEN frames after reset, open after."""
+    await _reset_and_start_clock(dut)
+
+    # Frame 1 is inside the blink window (blink_counter=1 < BLINK_LEN=6).
+    # Ball at (306, 225). The left-eye sprite cell is (3, 4); on screen at
+    # (306 + 6, 225 + 8) = (312, 233).
+    bx, by = ball_xy_at_frame(1)
+    samples = await scan_next_frame(dut, {
+        "left_eye_blink": (bx + 6, by + 8),
+    })
+    assert rgb_from_uo(samples["left_eye_blink"]) == BALL_COLOR_RGB, (
+        f"Eye should be CLOSED (face fill, yellow) during blink window at "
+        f"frame 1; got {rgb_from_uo(samples['left_eye_blink'])}"
+    )
+
+    # Advance past the blink window. We're at frame 1 after the first scan;
+    # _wait_frames(8) + scan_next_frame's own vsync wait gives 9 more ticks,
+    # landing us at frame 10 (blink_counter = 10 >= BLINK_LEN = 6).
+    await _wait_frames(dut, 8)
+    bx, by = ball_xy_at_frame(10)
+    samples = await scan_next_frame(dut, {
+        "left_eye_open": (bx + 6, by + 8),
+    })
+    assert rgb_from_uo(samples["left_eye_open"]) == BG_COLOR_RGB, (
+        f"Eye should be OPEN (background blue) outside the blink window at "
+        f"frame 10; got {rgb_from_uo(samples['left_eye_open'])}"
+    )
+
+    dut._log.info("Eye-blink OK: closed at frame 1, open at frame 10")

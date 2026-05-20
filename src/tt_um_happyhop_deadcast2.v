@@ -50,6 +50,12 @@ module tt_um_happyhop_deadcast2 (
     localparam signed [3:0] INIT_VX     = 4'sd2;     // pixels per frame
     localparam signed [3:0] INIT_VY     = 4'sd1;
 
+    // ---- Blink timing -----------------------------------------------------
+    // blink_counter ticks once per frame (60 Hz). The first BLINK_LEN frames
+    // of every 2^7 = 128 frames close the smiley's eyes, giving a ~100 ms
+    // blink every ~2.1 seconds.
+    localparam [6:0] BLINK_LEN = 7'd6;
+
     // ---- Frame tick: falling edge of VSync (start of vertical sync pulse) -
     // This fires exactly once per 60 Hz frame.
     reg vsync_prev;
@@ -64,6 +70,14 @@ module tt_um_happyhop_deadcast2 (
     reg [9:0]        ball_y_reg;
     reg signed [3:0] vel_x;
     reg signed [3:0] vel_y;
+
+    // ---- Blink state -------------------------------------------------------
+    reg [6:0] blink_counter;
+    always @(posedge clk) begin
+        if (!rst_n)            blink_counter <= 7'd0;
+        else if (frame_tick)   blink_counter <= blink_counter + 7'd1;
+    end
+    wire blink = (blink_counter < BLINK_LEN);
 
     // ---- Edge detection / next-position math (combinational) --------------
     // Sign-extend the 4-bit velocity to 11 bits so it can be added to a
@@ -114,6 +128,7 @@ module tt_um_happyhop_deadcast2 (
         .y      (pix_y),
         .ball_x (ball_x_reg),
         .ball_y (ball_y_reg),
+        .blink  (blink),
         .rgb    (rgb)
     );
 

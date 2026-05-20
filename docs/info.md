@@ -21,7 +21,9 @@ image is recomputed every frame.
 
 In its initial form the object is a solid colored square; later revisions
 upgrade it to a smiley face using a small sprite-mask ROM that defines a
-circular face plus eyes and a mouth.
+circular face plus eyes and a mouth. The smiley also **blinks** - every
+~2 seconds a small frame counter swaps the eye rows of the sprite for a
+"closed" pattern for ~100 ms, giving the face a bit of personality.
 
 ## How to test
 
