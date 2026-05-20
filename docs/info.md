@@ -25,10 +25,12 @@ circular face plus eyes and a mouth. The smiley also **blinks** - every
 ~2 seconds a small frame counter swaps the eye rows of the sprite for a
 "closed" pattern for ~100 ms, giving the face a bit of personality.
 Additionally, the smiley **looks in the direction of motion**: when the
-ball is moving right the eye-row pattern shifts two sprite columns to the
+ball is moving right the eye-row pattern shifts one sprite column to the
 right, and when it bounces and starts moving left the eyes shift back to
-the left-leaning position - all by selecting between two pre-baked
-16-bit eye-row constants based on the sign of the velocity register.
+the left-leaning position - a small, subtle nudge that's just enough to
+suggest the face is following its own trajectory. The whole effect is one
+mux selecting between two pre-baked 16-bit eye-row constants based on the
+sign of the velocity register.
 
 ## How to test
 

@@ -61,7 +61,9 @@ module pixel_logic #(
     //  15  | ...XXXXXXXXXX... | 1FF8
     // Sprite rows 4 and 5 hold the eyes.
     //   0xE79F = 1110_0111_1001_1111 -> eyes at cols 3-4 and 9-10  (looking LEFT)
-    //   0xF9E7 = 1111_1001_1110_0111 -> eyes at cols 5-6 and 11-12 (looking RIGHT)
+    //   0xF3CF = 1111_0011_1100_1111 -> eyes at cols 4-5 and 10-11 (looking RIGHT,
+    //                                   shifted just one sprite column over so the
+    //                                   direction change reads as subtle, not exaggerated)
     //   0xFFFF                       -> face fill (eyes closed; blink)
     function automatic [15:0] smiley_row(
         input [3:0] row,
@@ -73,8 +75,8 @@ module pixel_logic #(
             4'd1:  smiley_row = 16'h3FFC;
             4'd2:  smiley_row = 16'h7FFE;
             4'd3:  smiley_row = 16'hFFFF;
-            4'd4:  smiley_row = blink_in ? 16'hFFFF : (look_right ? 16'hF9E7 : 16'hE79F);
-            4'd5:  smiley_row = blink_in ? 16'hFFFF : (look_right ? 16'hF9E7 : 16'hE79F);
+            4'd4:  smiley_row = blink_in ? 16'hFFFF : (look_right ? 16'hF3CF : 16'hE79F);
+            4'd5:  smiley_row = blink_in ? 16'hFFFF : (look_right ? 16'hF3CF : 16'hE79F);
             4'd6:  smiley_row = 16'hFFFF;
             4'd7:  smiley_row = 16'hFFFF;
             4'd8:  smiley_row = 16'hFFFF;
