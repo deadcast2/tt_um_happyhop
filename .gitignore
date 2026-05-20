@@ -1,0 +1,31 @@
+# Editor / OS junk
+.DS_Store
+.idea
+
+# Sim artifacts
+*.vcd
+*.fst
+*.fst.hier
+test/sim_build
+test/__pycache__/
+test/results.xml
+test/gate_level_netlist.v
+
+# TT / LibreLane runs
+runs
+tt_submission
+src/user_config.json
+src/config_merged.json
+
+# Vivado output (only XDC, Verilog, and TCL should be tracked under fpga/)
+fpga/build/
+fpga/build.log
+fpga/.Xil/
+
+# Vivado leaves these in whichever directory it was invoked from
+vivado*.log
+vivado*.jou
+.Xil/
+dfx_runtime.txt
+*.xpr
+*.bit
