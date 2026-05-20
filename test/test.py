@@ -330,8 +330,12 @@ async def test_smiley_features(dut):
 
     bx, by = ball_xy_at_frame(10)
 
-    eye_x,   eye_y   = bx + 2 * 3,  by + 2 * 4
-    nose_x,  nose_y  = bx + 2 * 6,  by + 2 * 4
+    # Ball is moving right at frame 10 (vel_x = +2 hasn't bounced yet), so
+    # the eyes are at sprite cols 5-6 / 11-12 (looking-right sprite). Adjust
+    # sample columns accordingly: left-eye hole at col 5, between-eyes face
+    # at col 8.
+    eye_x,   eye_y   = bx + 2 * 5,  by + 2 * 4
+    nose_x,  nose_y  = bx + 2 * 8,  by + 2 * 4
     mouth_x, mouth_y = bx + 2 * 8,  by + 2 * 10
     chin_x,  chin_y  = bx + 2 * 7,  by + 2 * 14
 
@@ -441,12 +445,12 @@ async def test_blink(dut):
     """Eyes are closed during the first BLINK_LEN frames after reset, open after."""
     await _reset_and_start_clock(dut)
 
+    # Ball is moving right throughout the test, so we sample the right-shifted
+    # eye position (sprite col 5 -> ball-relative col 10).
     # Frame 1 is inside the blink window (blink_counter=1 < BLINK_LEN=6).
-    # Ball at (306, 225). The left-eye sprite cell is (3, 4); on screen at
-    # (306 + 6, 225 + 8) = (312, 233).
     bx, by = ball_xy_at_frame(1)
     samples = await scan_next_frame(dut, {
-        "left_eye_blink": (bx + 6, by + 8),
+        "left_eye_blink": (bx + 10, by + 8),
     })
     assert rgb_from_uo(samples["left_eye_blink"]) == BALL_COLOR_RGB, (
         f"Eye should be CLOSED (face fill, yellow) during blink window at "
@@ -459,7 +463,7 @@ async def test_blink(dut):
     await _wait_frames(dut, 8)
     bx, by = ball_xy_at_frame(10)
     samples = await scan_next_frame(dut, {
-        "left_eye_open": (bx + 6, by + 8),
+        "left_eye_open": (bx + 10, by + 8),
     })
     assert rgb_from_uo(samples["left_eye_open"]) == BG_COLOR_RGB, (
         f"Eye should be OPEN (background blue) outside the blink window at "
@@ -467,3 +471,38 @@ async def test_blink(dut):
     )
 
     dut._log.info("Eye-blink OK: closed at frame 1, open at frame 10")
+
+
+# ---- Phase 6: direction-aware eye position ---------------------------------
+
+
+@cocotb.test()
+async def test_looking_right(dut):
+    """When the ball is moving right (vel_x > 0), the smiley's eyes are at
+    sprite cols 5-6 / 11-12 (shifted right) instead of cols 3-4 / 9-10.
+
+    This is verified at frame 10, where the ball still has its initial
+    positive vel_x and is past the blink window so the eye holes are visible.
+    """
+    await _reset_and_start_clock(dut)
+    await _wait_frames(dut, 9)
+    bx, by = ball_xy_at_frame(10)
+
+    # Sprite col 3 was the LEFT-LOOKING eye position; with the ball looking
+    # right it's filled with face. Sprite col 5 is the new (RIGHT-LOOKING)
+    # eye position; it's a hole.
+    samples = await scan_next_frame(dut, {
+        "old_left_eye_col_now_face":  (bx + 2 * 3, by + 2 * 4),
+        "new_right_shifted_eye_hole": (bx + 2 * 5, by + 2 * 4),
+    })
+
+    assert rgb_from_uo(samples["old_left_eye_col_now_face"]) == BALL_COLOR_RGB, (
+        f"Sprite col 3 row 4 should be FACE (yellow) when looking right; "
+        f"got {rgb_from_uo(samples['old_left_eye_col_now_face'])}"
+    )
+    assert rgb_from_uo(samples["new_right_shifted_eye_hole"]) == BG_COLOR_RGB, (
+        f"Sprite col 5 row 4 should be EYE HOLE (background) when looking "
+        f"right; got {rgb_from_uo(samples['new_right_shifted_eye_hole'])}"
+    )
+
+    dut._log.info("Looking-right eyes verified at sprite col 5 (hole) vs col 3 (face)")

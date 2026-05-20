@@ -121,15 +121,23 @@ module tt_um_happyhop_deadcast2 (
         end
     end
 
+    // ---- Direction-aware eye position --------------------------------------
+    // Pull the smiley's eyes toward the direction it's moving. vel_x is a
+    // 4-bit signed value: bit 3 = 0 means positive (right), bit 3 = 1 means
+    // negative (left). vel_x is never 0 in this design so the polarity is
+    // always defined.
+    wire looking_right = ~vel_x[3];
+
     // ---- Per-pixel color decision -----------------------------------------
     wire [5:0] rgb;
     pixel_logic pixels (
-        .x      (pix_x),
-        .y      (pix_y),
-        .ball_x (ball_x_reg),
-        .ball_y (ball_y_reg),
-        .blink  (blink),
-        .rgb    (rgb)
+        .x             (pix_x),
+        .y             (pix_y),
+        .ball_x        (ball_x_reg),
+        .ball_y        (ball_y_reg),
+        .blink         (blink),
+        .looking_right (looking_right),
+        .rgb           (rgb)
     );
 
     // Gate with video_active so RGB lines stay at 0 during blanking.

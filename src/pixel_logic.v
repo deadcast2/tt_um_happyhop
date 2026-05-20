@@ -20,7 +20,9 @@ module pixel_logic #(
     input  wire [9:0] y,
     input  wire [9:0] ball_x,    // top-left corner of the ball's bounding box
     input  wire [9:0] ball_y,
-    input  wire       blink,     // when 1, swap eye rows for the closed-eye pattern
+    input  wire       blink,         // when 1, swap eye rows for the closed-eye pattern
+    input  wire       looking_right, // 1: eyes at cols 5-6 / 11-12  (looking right)
+                                     // 0: eyes at cols 3-4 / 9-10   (looking left)
     output wire [5:0] rgb        // 2 bits per channel; RRGGBB
 );
 
@@ -57,18 +59,22 @@ module pixel_logic #(
     //  13  | .XXXXXXXXXXXXXX. | 7FFE
     //  14  | ..XXXXXXXXXXXX.. | 3FFC
     //  15  | ...XXXXXXXXXX... | 1FF8
-    // Sprite rows 4 and 5 hold the eyes (cols 3-4 and 9-10 are 0 in the
-    // open-eye pattern). When blink is asserted those rows become 16'hFFFF
-    // (solid face fill), giving the impression that the smiley closed its
-    // eyes for the duration of the blink pulse.
-    function automatic [15:0] smiley_row(input [3:0] row, input blink_in);
+    // Sprite rows 4 and 5 hold the eyes.
+    //   0xE79F = 1110_0111_1001_1111 -> eyes at cols 3-4 and 9-10  (looking LEFT)
+    //   0xF9E7 = 1111_1001_1110_0111 -> eyes at cols 5-6 and 11-12 (looking RIGHT)
+    //   0xFFFF                       -> face fill (eyes closed; blink)
+    function automatic [15:0] smiley_row(
+        input [3:0] row,
+        input       blink_in,
+        input       look_right
+    );
         case (row)
             4'd0:  smiley_row = 16'h1FF8;
             4'd1:  smiley_row = 16'h3FFC;
             4'd2:  smiley_row = 16'h7FFE;
             4'd3:  smiley_row = 16'hFFFF;
-            4'd4:  smiley_row = blink_in ? 16'hFFFF : 16'hE79F;
-            4'd5:  smiley_row = blink_in ? 16'hFFFF : 16'hE79F;
+            4'd4:  smiley_row = blink_in ? 16'hFFFF : (look_right ? 16'hF9E7 : 16'hE79F);
+            4'd5:  smiley_row = blink_in ? 16'hFFFF : (look_right ? 16'hF9E7 : 16'hE79F);
             4'd6:  smiley_row = 16'hFFFF;
             4'd7:  smiley_row = 16'hFFFF;
             4'd8:  smiley_row = 16'hFFFF;
@@ -84,7 +90,7 @@ module pixel_logic #(
     endfunction
 
     // Bit 15 = sprite column 0, bit 0 = sprite column 15.
-    wire [15:0] sprite_bits = smiley_row(sprite_y, blink);
+    wire [15:0] sprite_bits = smiley_row(sprite_y, blink, looking_right);
     wire [3:0]  bit_index   = 4'd15 - sprite_x;
     wire        smiley_bit  = sprite_bits[bit_index];
 
