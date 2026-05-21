@@ -1,45 +1,18 @@
-<!---
-This file is the project datasheet, rendered on the Tiny Tapeout submissions page.
-Keep images under 512 kB each and all images combined under 1 MB.
--->
+<!-- TT submissions page datasheet. Keep total images < 1 MB. -->
 
 ## How it works
 
-`happyhop` is a single-tile VGA video generator that draws a colored bouncing
-object on a 640x480 monitor with no framebuffer.
-
-The chip runs at a 25.175 MHz pixel clock and produces a standard VGA signal.
-A "race the beam" renderer is used: a sync generator emits HSync/VSync and
-tracks the current `(x, y)` position of the scanning beam, and a small pixel
-function decides the color of each pixel combinationally based on whether it
-lies inside the object being drawn.
-
-The object's position is updated once per VSync. When an edge of the screen
-is reached, the corresponding velocity component flips sign and the object
-bounces away. There is no framebuffer, no memory of past frames - the whole
-image is recomputed every frame.
-
-In its initial form the object is a solid colored square; later revisions
-upgrade it to a smiley face using a small sprite-mask ROM that defines a
-circular face plus eyes and a mouth. The smiley also **blinks** - every
-~2 seconds a small frame counter swaps the eye rows of the sprite for a
-"closed" pattern for ~100 ms, giving the face a bit of personality.
-Additionally, the smiley **looks in the direction of motion**: when the
-ball is moving right the eye-row pattern shifts one sprite column to the
-right, and when it bounces and starts moving left the eyes shift back to
-the left-leaning position - a small, subtle nudge that's just enough to
-suggest the face is following its own trajectory. The whole effect is one
-mux selecting between two pre-baked 16-bit eye-row constants based on the
-sign of the velocity register.
+A 16x16 smiley sprite bounces around a 640x480 VGA screen. No framebuffer
+— each pixel is computed live from the beam position and the ball's `(x, y)`.
+The smiley blinks every ~2 seconds and its eyes shift toward the direction
+of motion.
 
 ## How to test
 
-1. Plug the Tiny Tapeout VGA PMOD into the chip's output PMOD socket.
-2. Connect the PMOD's VGA connector to a monitor that accepts 640x480 @ 60 Hz.
-3. Apply power. The bouncing object should appear immediately; no input
-   controls are required.
+Plug the TT VGA PMOD into the chip's output PMOD, connect a 640x480 @ 60 Hz
+monitor, power on. No input controls.
 
 ## External hardware
 
-- Tiny Tapeout VGA PMOD (Matt Venn's RGB222 + HSync/VSync design).
-- A VGA-capable display set to 640x480 @ 60 Hz.
+- TT VGA PMOD (Matt Venn)
+- VGA monitor at 640x480 @ 60 Hz

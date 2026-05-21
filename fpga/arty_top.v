@@ -1,27 +1,6 @@
-/*
- * FPGA prototype wrapper for happyhop on the Digilent Arty A7 35T.
- *
- * NOT part of the ASIC tape-out - this file exists only so we can drive
- * the chip's logic from a real pixel clock on the FPGA and see the
- * result on a VGA monitor via the Digilent Pmod VGA plugged into
- * JB (upper) + JC (lower).
- *
- * Clocking
- *   The Arty has a 100 MHz onboard oscillator. We divide by 4 to get a
- *   25 MHz pixel clock. That's close enough to the 25.175 MHz VGA spec
- *   that any modern monitor will lock cleanly to 640x480 @ 60 Hz.
- *
- * Color mapping
- *   The chip outputs RGB222 via the TT VGA PMOD pinout. The Digilent
- *   Pmod VGA expects RGB444, so we bit-replicate each 2-bit channel
- *   to 4 bits (the LSBs repeat the MSBs).
- *
- * Reset
- *   BTN0 is the active-high reset input. We synchronize it into the
- *   pixel-clock domain and invert it for the chip's active-low rst_n.
- *
- * SPDX-License-Identifier: Apache-2.0
- */
+// Arty A7 35T wrapper: /4 clock divide (100->25 MHz), RGB222 -> RGB444
+// bit-replication, BTN0 -> active-low rst_n synchronizer. FPGA-only.
+// SPDX-License-Identifier: Apache-2.0
 
 `default_nettype none
 

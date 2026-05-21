@@ -1,15 +1,5 @@
-/*
- * happyhop - Tiny Tapeout VGA bouncing-ball demo.
- *
- * Phase 3: the ball animates. Position registers update once per VSync;
- *          velocity components flip sign when the ball reaches a screen edge.
- *
- * Pinout (TT VGA PMOD, RGB222):
- *   uo[0]=R1   uo[1]=G1   uo[2]=B1   uo[3]=VSync
- *   uo[4]=R0   uo[5]=G0   uo[6]=B0   uo[7]=HSync
- *
- * SPDX-License-Identifier: Apache-2.0
- */
+// happyhop top: bouncing, blinking, direction-tracking smiley on VGA.
+// SPDX-License-Identifier: Apache-2.0
 
 `default_nettype none
 

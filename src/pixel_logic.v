@@ -1,13 +1,6 @@
-/*
- * Per-pixel color decision for happyhop.
- *
- * Phase 4: the ball is upgraded from a solid square to a smiley face. The
- * smiley is stored as a 16x16 bitmask in a small synthesizable ROM and
- * scaled 2x to fill the 32x32 ball bounding box. Bits set in the mask draw
- * the ball color; bits clear fall through to the background.
- *
- * SPDX-License-Identifier: Apache-2.0
- */
+// Per-pixel color: 16x16 smiley sprite (with blink + look-direction)
+// scaled 2x within a 32x32 ball bbox.
+// SPDX-License-Identifier: Apache-2.0
 
 `default_nettype none
 

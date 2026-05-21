@@ -1,24 +1,7 @@
-/*
- * VGA sync generator for 640x480 @ 60 Hz.
- *
- * Pixel clock: 25.175 MHz (so one clock = one pixel).
- *
- * Horizontal timing (in pixel clocks, 0-indexed):
- *   Active video : 0   .. 639     (640 pixels)
- *   Front porch  : 640 .. 655     ( 16 pixels)
- *   Sync pulse   : 656 .. 751     ( 96 pixels, active low)
- *   Back porch   : 752 .. 799     ( 48 pixels)
- *   Line total   :                  800 pixels
- *
- * Vertical timing (in lines, 0-indexed):
- *   Active video : 0   .. 479     (480 lines)
- *   Front porch  : 480 .. 489     ( 10 lines)
- *   Sync pulse   : 490 .. 491     (  2 lines, active low)
- *   Back porch   : 492 .. 524     ( 33 lines)
- *   Frame total  :                  525 lines
- *
- * SPDX-License-Identifier: Apache-2.0
- */
+// 640x480 @ 60 Hz VGA sync generator, 25.175 MHz pixel clock.
+//   H: 640 active + 16 fp + 96 sync + 48 bp = 800
+//   V: 480 active + 10 fp +  2 sync + 33 bp = 525
+// SPDX-License-Identifier: Apache-2.0
 
 `default_nettype none
 
